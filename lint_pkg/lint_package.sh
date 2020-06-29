@@ -1,14 +1,10 @@
 #!/bin/sh -l
 
-echo 'repository:' $1
-echo 'ref:' $2
-echo 'path:' $4
-
 echo '\nGetting the code...\n'
-git clone --quiet https://$3@github.com/$1 lint
+git clone --quiet https://$2@github.com/$1 lint
 cd lint
-git checkout --quiet $2
-cd $4
+git checkout --quiet $GITHUB_SHA
+cd $3
 echo '\nInstalling the package...\n'
 Rscript -e 'remotes::install_local(quiet = TRUE)'
 echo '\nChecking linters in package...\n'

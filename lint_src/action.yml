@@ -1,5 +1,5 @@
-name: "Lint package"
-description: "Check the coding style of an R package using the lintr package"
+name: "Lint R related files"
+description: "Check the coding style of all .R, .Rmd and .Rnw files in a folder"
 inputs:
   repository:
     description: 'Repository name with owner. For example, actions/checkout'

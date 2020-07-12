@@ -1,18 +1,20 @@
-# lint_pkg
+# check_pkg
 
-This Github action runs `lintr::lint_package()` and fails when it encounters linters in the code.
+This Github action runs `checklist::check_package()` and fails when it encounters linters in the code.
 
 Add a `.yaml` file like the example below to the `.github/workflows` folder of your project.
 
 ```
 on: [push]
 
-name: check-linters
+name: check-pkg
 
 jobs:
-  check_linters:
+  check_package:
     runs-on: ubuntu-latest
-    name: Check for linters in the code
+    name: Check package
     steps:
-      - uses: inbo/actions/lint_pkg@master
+      - uses: inbo/actions/check_pkg@master
+        with:
+          - path: my_path
 ```

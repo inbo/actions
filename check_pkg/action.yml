@@ -21,6 +21,10 @@ inputs:
     description: >
       Which path must be checked. This path is relative to the root of the repository.
     default: "."
+  CODECOV_TOKEN:
+    description: >
+      A token for https://codecov.io.
+    default: ""
 runs:
   using: 'docker'
   image: docker://inbobmk/checklist
@@ -28,3 +32,4 @@ runs:
     - ${{ inputs.repository }}
     - ${{ inputs.token }}
     - ${{ inputs.path }}
+    - ${{ inputs.CODECOV_TOKEN }}

@@ -17,4 +17,7 @@ jobs:
       - uses: inbo/actions/check_pkg@master
         with:
           - path: my_path
+          - CODECOV_TOKEN: "some codecov token"
+          - ORCID_TOKEN: "my ORCID token"
+          - aptget: libgit2-dev
 ```

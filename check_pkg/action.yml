@@ -29,6 +29,10 @@ inputs:
     description: >
       A token for https://orcid.org.
     default: ""
+  aptget:
+    description: >
+      A list of apt-get packages to install. They should be space separated.
+    default: ""
 runs:
   using: 'docker'
   image: docker://inbobmk/checklist
@@ -38,3 +42,4 @@ runs:
     - ${{ inputs.path }}
     - ${{ inputs.CODECOV_TOKEN }}
     - ${{ inputs.ORCID_TOKEN }}
+    - ${{ inputs.aptget }}

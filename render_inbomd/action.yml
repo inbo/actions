@@ -1,0 +1,5 @@
+name: "Render examples for the INBOmd package"
+description: "Render github.com/inbo/inbomd_examples"
+runs:
+  using: 'docker'
+  image: docker://inbobmk/inbomd

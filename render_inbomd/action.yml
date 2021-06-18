@@ -1,5 +1,14 @@
 name: "Render examples for the INBOmd package"
 description: "Render github.com/inbo/inbomd_examples"
+inputs:
+  example-branch:
+    description: >
+      Which branch of https://github.com/inbo/inbomd_examples you want to use
+      when testing https://github.com/inbo/inbomd
+    required: true
+    default: 'master'
 runs:
   using: 'docker'
   image: docker://inbobmk/inbomd
+  args:
+    - ${{ inputs.example-branch }}

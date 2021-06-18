@@ -1,5 +1,5 @@
-name: "Lint package"
-description: "Check the coding style of an R package using the lintr package"
+name: "Render indicatoren"
+description: "Render github.com/inbo/indicatoren"
 inputs:
   repository:
     description: 'Repository name with owner. For example, actions/checkout'

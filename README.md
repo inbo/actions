@@ -8,5 +8,10 @@ A set of GitHub actions
   Based on [`checklist::check_source()`](https://inbo.github.io/checklist/reference/check_source.html).
 - `lint_pkg`: check the coding style of an R package using `lintr::lint_package()`.
 - `lint_src`: check the coding style of R scripts, Rmarkdown files or Sweave files using `lintr::lint_dir()`.
+- `pkgdown_covr`: check code coverage, build a pkgdown website and deploy it to a gh-pages branch.
+- `render_indicator`: render the INBOmd examples.
+  Not relevant for other purposes.
 - `render_indicator`: render the INBO indicators.
+  Not relevant for other purposes.
+- `render_nara`: render the NARA background documents.
   Not relevant for other purposes.

@@ -25,6 +25,8 @@ runs:
   using: 'docker'
   image: docker://inbobmk/checklist
   entrypoint: '/entrypoint_source.sh'
+  env:
+    GITHUB_TOKEN: ${{ inputs.token }}
   args:
     - ${{ inputs.repository }}
     - ${{ inputs.token }}

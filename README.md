@@ -11,6 +11,8 @@ A set of GitHub actions
 - `pkgdown_covr`: check code coverage, build a pkgdown website and deploy it to a gh-pages branch.
 - `protocol_check`: check the protocol in [inbo/protocolsource](https://github.com/inbo/protocolsource) and update the version number if needed.
   Not relevant for other purposes.
+- `protocol_update`: add the new protocol to `.zenodo.json` and the general `NEWS.md` in [inbo/protocolsource](https://github.com/inbo/protocolsource).
+  Not relevant for other purposes.
 - `render_indicator`: render the INBOmd examples.
   Not relevant for other purposes.
 - `render_indicator`: render the INBO indicators.

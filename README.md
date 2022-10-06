@@ -13,6 +13,8 @@ A set of GitHub actions
   Not relevant for other purposes.
 - `protocol_update`: add the new protocol to `.zenodo.json` and the general `NEWS.md` in [inbo/protocolsource](https://github.com/inbo/protocolsource).
   Not relevant for other purposes.
+- `protocol_website`: render protocol and add website to inbo/protocols.
+  Not relevant for other purposes.
 - `render_indicator`: render the INBOmd examples.
   Not relevant for other purposes.
 - `render_indicator`: render the INBO indicators.

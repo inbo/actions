@@ -1,0 +1,26 @@
+name: "protocol to website"
+description: "publish the protocol in github.com/inbo/protocols"
+inputs:
+  GITHUB_REPOSITORY_DEST:
+    description: 'Repository name with owner in which website has to be published. For example, inbo/protocols'
+    defaults: "inbo/protocols"
+  PAT:
+    description: >
+      Personal access token (PAT) used to fetch both repositories. The PAT is configured
+      with the local git config, which enables your scripts to run authenticated git
+      commands. The post-job step removes the PAT.
+
+
+      We recommend using a service account with the least permissions necessary.
+      Also when generating a new PAT, select the least scopes necessary.
+
+
+      [Learn more about creating and using encrypted secrets](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets)
+    default: ${{ github.token }}
+runs:
+  using: 'docker'
+  image: docker://inbobmk/protocols
+  entrypoint: '/entrypoint_website.sh'
+  env:
+    GITHUB_PAT: ${{ inputs.PAT }}
+    GITHUB_REPOSITORY_DEST: ${{ inputs.GITHUB_REPOSITORY_DEST }}

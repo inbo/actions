@@ -14,9 +14,16 @@ inputs:
 
       [Learn more about creating and using encrypted secrets](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets)
     default: ${{ github.token }}
+  SOURCE_BRANCH:
+    description: >
+      In which head branch is the GitHub Action triggered?
+      (This is not passed by GitHub when using pull_request_review.)
+    default: ${{ github.event.pull_request.head.ref }}
 runs:
   using: 'docker'
   image: docker://inbobmk/protocols
   entrypoint: '/entrypoint_update.sh'
   env:
     GITHUB_PAT: ${{ inputs.PAT }}
+    SOURCE_BRANCH: ${{ inputs.SOURCE_BRANCH }}
+

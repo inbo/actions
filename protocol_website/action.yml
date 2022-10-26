@@ -17,6 +17,9 @@ inputs:
 
       [Learn more about creating and using encrypted secrets](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets)
     default: ${{ github.token }}
+  RECENT_MERGED_BRANCH_NAME:
+    description: >
+      Name of branch that was merged in the main during the push that triggers this action.
 runs:
   using: 'docker'
   image: docker://inbobmk/protocols
@@ -24,3 +27,4 @@ runs:
   env:
     GITHUB_PAT: ${{ inputs.PAT }}
     GITHUB_REPOSITORY_DEST: ${{ inputs.GITHUB_REPOSITORY_DEST }}
+    RECENT_MERGED_BRANCH_NAME: ${{ inputs.RECENT_MERGED_BRANCH_NAME }}

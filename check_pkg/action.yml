@@ -17,10 +17,6 @@ inputs:
       A list of apt-get packages to install. They should be space separated.
     default: ""
 
-permissions:
-  contents: write
-  pages: write
-
 runs:
   using: 'docker'
   image: docker://inbobmk/checklist:dev-token

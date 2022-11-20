@@ -9,9 +9,6 @@ inputs:
       Which path must be checked. This path is relative to the root of the repository.
     default: "."
 
-permissions:
-  contents: read
-
 runs:
   using: 'docker'
   image: docker://inbobmk/checklist:dev-token

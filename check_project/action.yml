@@ -13,10 +13,6 @@ runs:
   using: 'docker'
   image: docker://inbobmk/checklist:dev-token
   entrypoint: '/entrypoint_project.sh'
-  env:
-    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  permissions:
-    contents: read
   args:
     - ${{ inputs.repository }}
     - ${{ inputs.path }}

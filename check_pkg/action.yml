@@ -20,6 +20,11 @@ inputs:
 runs:
   using: 'docker'
   image: docker://inbobmk/checklist:dev-token
+  env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  permissions:
+    contents: write
+    pages: write
   args:
     - ${{ inputs.repository }}
     - ${{ inputs.path }}

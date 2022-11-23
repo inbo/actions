@@ -1,17 +1,10 @@
 name: "Elaborate package check"
 description: "Thouroughly check an R package on different topics"
 inputs:
-  repository:
-    description: 'Repository name with owner. For example, actions/checkout'
-    default: ${{ github.repository }}
   path:
     description: >
       Which path must be checked. This path is relative to the root of the repository.
     default: "."
-  CODECOV_TOKEN:
-    description: >
-      A token for https://codecov.io.
-    default: ""
   aptget:
     description: >
       A list of apt-get packages to install. They should be space separated.
@@ -22,11 +15,10 @@ runs:
   image: docker://inbobmk/checklist:dev-token
   env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
   permissions:
     contents: write
     pages: write
   args:
-    - ${{ inputs.repository }}
     - ${{ inputs.path }}
-    - ${{ inputs.CODECOV_TOKEN }}
     - ${{ inputs.aptget }}

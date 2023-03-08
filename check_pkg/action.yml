@@ -1,45 +1,18 @@
 name: "Elaborate package check"
 description: "Thouroughly check an R package on different topics"
 inputs:
-  repository:
-    description: 'Repository name with owner. For example, actions/checkout'
-    default: ${{ github.repository }}
-  token:
-    description: >
-      Personal access token (PAT) used to fetch the repository. The PAT is configured
-      with the local git config, which enables your scripts to run authenticated git
-      commands. The post-job step removes the PAT.
-
-
-      We recommend using a service account with the least permissions necessary.
-      Also when generating a new PAT, select the least scopes necessary.
-
-
-      [Learn more about creating and using encrypted secrets](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets)
-    default: ${{ github.token }}
   path:
     description: >
       Which path must be checked. This path is relative to the root of the repository.
     default: "."
-  CODECOV_TOKEN:
-    description: >
-      A token for https://codecov.io.
-    default: ""
-  ORCID_TOKEN:
-    description: >
-      A token for https://orcid.org.
-    default: ""
   aptget:
     description: >
       A list of apt-get packages to install. They should be space separated.
     default: ""
+
 runs:
   using: 'docker'
-  image: docker://inbobmk/checklist:version-0.2.6
+  image: docker://inbobmk/checklist:version-0.3.0
   args:
-    - ${{ inputs.repository }}
-    - ${{ inputs.token }}
     - ${{ inputs.path }}
-    - ${{ inputs.CODECOV_TOKEN }}
-    - ${{ inputs.ORCID_TOKEN }}
     - ${{ inputs.aptget }}

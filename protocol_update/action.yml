@@ -1,0 +1,23 @@
+name: "update protocol"
+description: "add the new protocol .zenodo.json and NEWS.md in github.com/inbo/protocolsource"
+inputs:
+  PAT:
+    description: >
+      Personal access token (PAT) used to fetch the repository. The PAT is configured
+      with the local git config, which enables your scripts to run authenticated git
+      commands. The post-job step removes the PAT.
+
+
+      We recommend using a service account with the least permissions necessary.
+      Also when generating a new PAT, select the least scopes necessary.
+
+
+      [Learn more about creating and using encrypted secrets](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets)
+    default: ${{ github.token }}
+runs:
+  using: 'docker'
+  image: docker://inbobmk/protocols
+  entrypoint: '/entrypoint_update.sh'
+  env:
+    GITHUB_PAT: ${{ inputs.PAT }}
+

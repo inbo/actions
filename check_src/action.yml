@@ -23,7 +23,7 @@ inputs:
     default: "."
 runs:
   using: 'docker'
-  image: docker://inbobmk/checklist:version-0.3.0
+  image: docker://inbobmk/checklist:latest
   entrypoint: '/entrypoint_source.sh'
   env:
     GITHUB_TOKEN: ${{ inputs.token }}

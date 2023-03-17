@@ -14,10 +14,14 @@ inputs:
 
       [Learn more about creating and using encrypted secrets](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets)
     default: ${{ github.token }}
+  GITHUB_HEAD_REF:
+    description: >
+      The name of the protocol branch that is to be merged.
+    default: ${{ github.event.pull_request.head.ref }}
 runs:
   using: 'docker'
   image: docker://inbobmk/protocols
   entrypoint: '/entrypoint_update.sh'
   env:
     GITHUB_PAT: ${{ inputs.PAT }}
-
+    GITHUB_HEAD_REF: ${{ inputs.GITHUB_HEAD_REF }}

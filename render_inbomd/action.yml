@@ -1,10 +1,5 @@
 name: "Render examples for the INBOmd package"
 description: "Render github.com/inbo/inbomd_examples"
-inputs:
-  tag:
-    description: >
-      Which tag of inbobmk/inbomd to use. Defaults to `latest`.
-    default: "latest"
 runs:
   using: 'docker'
-  image: docker://inbobmk/inbomd:${{ inputs.tag }}
+  image: docker://inbobmk/inbomd:0.6.1

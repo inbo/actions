@@ -11,7 +11,7 @@ inputs:
 
 runs:
   using: 'docker'
-  image: docker://inbobmk/checklist:latest
+  image: docker://inbobmk/checklist:version-0.3.3
   entrypoint: '/entrypoint_project.sh'
   args:
     - ${{ inputs.repository }}

@@ -1,18 +1,19 @@
 name: "Elaborate checks for an R project repository"
 description: "Automatically run the required checks on an R project."
 inputs:
-  repository:
-    description: 'Repository name with owner. For example, actions/checkout'
-    default: ${{ github.repository }}
   path:
     description: >
       Which path must be checked. This path is relative to the root of the repository.
     default: "."
+  cran:
+    description: >
+      An optional vector CRAN R packages required to pass the lintr checks.
+    default: ""
 
 runs:
   using: 'docker'
-  image: docker://inbobmk/checklist:version-0.3.3
+  image: docker://inbobmk/checklist:latest
   entrypoint: '/entrypoint_project.sh'
   args:
-    - ${{ inputs.repository }}
     - ${{ inputs.path }}
+    - ${{ inputs.cran }}

@@ -12,7 +12,7 @@ inputs:
 
 runs:
   using: 'docker'
-  image: docker://inbobmk/checklist:version-0.3.5
+  image: docker://inbobmk/checklist:latest
   entrypoint: '/entrypoint_project.sh'
   args:
     - ${{ inputs.path }}

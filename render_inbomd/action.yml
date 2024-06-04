@@ -2,4 +2,4 @@ name: "Render examples for the INBOmd package"
 description: "Render github.com/inbo/inbomd_examples"
 runs:
   using: 'docker'
-  image: docker://inbobmk/inbomd:0.6.1
+  image: docker://inbobmk/inbomd:latest

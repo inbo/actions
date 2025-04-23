@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Check package
     steps:
-      - uses: inbo/actions/check_pkg@master
+      - uses: inbo/actions/check_pkg@main
         with:
           - path: my_path
           - CODECOV_TOKEN: "some codecov token"

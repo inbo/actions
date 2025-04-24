@@ -18,6 +18,13 @@ inputs:
     description: >
       The name of the protocol branch that is to be merged.
     default: ${{ github.event.pull_request.head.ref }}
+  ZENODO:
+    description: >
+      Token used to create a new Zenodo deposit or update an existing Zenodo
+      deposit (https://zenodo.org/).
+      The associated DOI will be added or updated in the YAML front matter of
+      the protocol's index.Rmd file.
+    default: ""
 runs:
   using: 'docker'
   image: docker://inbobmk/protocols
@@ -25,3 +32,4 @@ runs:
   env:
     GITHUB_PAT: ${{ inputs.PAT }}
     GITHUB_HEAD_REF: ${{ inputs.GITHUB_HEAD_REF }}
+    ZENODO: ${{ inputs.ZENODO }}

@@ -12,7 +12,7 @@ inputs:
 
 runs:
   using: 'docker'
-  image: docker://inbobmk/checklist:version-0.4.2
+  image: docker://inbobmk/checklist:latest
   args:
     - ${{ inputs.path }}
     - ${{ inputs.aptget }}

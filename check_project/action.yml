@@ -9,6 +9,10 @@ inputs:
     description: >
       An optional vector CRAN R packages required to pass the lintr checks.
     default: ""
+  aptget:
+    description: >
+      A list of apt-get packages to install. They should be space separated.
+    default: ""
 
 runs:
   using: 'docker'
@@ -17,3 +21,4 @@ runs:
   args:
     - ${{ inputs.path }}
     - ${{ inputs.cran }}
+    - ${{ inputs.aptget }}

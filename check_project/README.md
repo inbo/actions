@@ -17,4 +17,5 @@ jobs:
       - uses: inbo/actions/check_project@master
         with:
           path: my_path
+          aptget: libgit2-dev
 ```

@@ -1,0 +1,31 @@
+name: "Render quarto document in a repository"
+description: "Render quarto document in a repository"
+inputs:
+  path:
+    description: >
+      Path which contains the quarto document.
+      This path is relative to the root of the repository.
+    default: "."
+  output:
+    description: >
+      Path where the rendered document will be stored.
+      This path is relative to the root of the repository.
+    default: ""
+runs:
+  using: "composite"
+
+  steps:
+
+    - name: Render Quarto Project
+      uses: quarto-dev/quarto-actions/render@87b35bb88b36317fa36b5189e9553b4164a5c5a3
+      with:
+        path: ${{ inputs.path }}
+
+    - name: "Upload docs artifact"
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+      with:
+        name: output
+        path: ${{ inputs.output }}
+        if-no-files-found: warn
+        retention-days: 1
+        overwrite: true

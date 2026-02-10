@@ -1,0 +1,37 @@
+name: "Deploy quarto to github pages"
+description: "Deploy the quarto site of a repository to GitHub Pages"
+
+runs:
+
+  using: "composite"
+  steps:
+
+    - name: "Check out code"
+      uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+      with:
+        fetch-depth: 0
+
+    - name: Prepare gh-pages
+      run: |
+        if git ls-remote --exit-code --heads origin gh-pages >/dev/null 2>&1; then
+          # Branch exists: check it out and amend
+          git fetch origin gh-pages
+          git checkout gh-pages
+          git rm -rf --ignore-unmatch .
+        else
+          # Branch does not exist: create orphan branch
+          git checkout --orphan gh-pages
+        fi
+      shell: bash
+
+    - name: "Download docs artifact"
+      uses: actions/download-artifact@484a0b528fb4d7bd804637ccb632e47a0e638317
+      with:
+        name: output
+
+    - name: Deploy output to gh-pages
+      run: |
+        git add -A
+        git commit --amend --no-edit --allow-empty
+        git push --force origin gh-pages
+      shell: bash

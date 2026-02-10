@@ -1,0 +1,10 @@
+name: "Render quarto document in a repository"
+description: "Render quarto document in a repository using a docker image"
+inputs:
+  INPUT_FOLDER:
+    description: >
+      Path which contains the quarto document. This path is relative to the root of the repository.
+    default: "."
+runs:
+  using: 'docker'
+  image: docker://inbobmk/flandersqmd:devel

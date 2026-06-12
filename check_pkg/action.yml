@@ -3,16 +3,59 @@ description: "Thouroughly check an R package on different topics"
 inputs:
   path:
     description: >
-      Which path must be checked. This path is relative to the root of the repository.
+      Which path to check. This path is relative to the root of the repository.
     default: "."
-  aptget:
-    description: >
-      A list of apt-get packages to install. They should be space separated.
-    default: ""
 
 runs:
-  using: 'docker'
-  image: docker://inbobmk/checklist:latest
-  args:
-    - ${{ inputs.path }}
-    - ${{ inputs.aptget }}
+
+  using: "composite"
+  steps:
+
+    - name: "get main branch"
+      if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master'
+      run: |
+        cd $GITHUB_WORKSPACE
+        CURRENT_COMMIT="$(git rev-parse HEAD)"
+        if git ls-remote --exit-code --heads origin main >/dev/null 2>&1; then
+          git fetch origin main:main --force
+        elif git ls-remote --exit-code --heads origin master >/dev/null 2>&1; then
+          git fetch origin master:master --force
+        else
+          echo "Neither main nor master branch found on origin." >&2
+          exit 1
+        fi
+        git checkout --force "$CURRENT_COMMIT"
+      shell: bash
+
+    - name: "Set up R"
+      uses: r-lib/actions/setup-r@ff9d3a3fd8acec17e91f1d0a1876d95ad60cb519
+      with:
+        r-version: release
+        extra-repositories:
+          https://cranhaven.r-universe.dev
+          https://inbo.r-universe.dev
+
+    - name: "Set up Pandoc"
+      uses: r-lib/actions/setup-pandoc@f50f115c574d8cb2ddc24934af6bed478382b0e7
+
+    - name: "Set up R dependencies"
+      uses: r-lib/actions/setup-r-dependencies@2e3959d284a9ed60162f28a0f9891d1150f47f72
+      with:
+        extra-packages:
+          any::checklist
+          any::covr
+          any::curl
+          any::cyclocomp
+          any::pkgdown
+          any::renv
+
+    - name: "Check R package"
+      run: |
+        setwd("$INPUT_PATH")
+        pak::local_install(dependencies = TRUE, upgrade = TRUE, ask = FALSE)
+        citeme::get_default_org_list()
+        checklist:::restore_roxygen2()
+        checklist::check_package()
+        covr::codecov(quiet = FALSE, commit="'$GITHUB_SHA'")
+        pkgdown::build_site(preview = FALSE, quiet = TRUE)
+      shell: Rscript {0}

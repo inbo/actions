@@ -5,20 +5,73 @@ inputs:
     description: >
       Which path must be checked. This path is relative to the root of the repository.
     default: "."
-  cran:
+  extra_repositories:
     description: >
-      An optional vector CRAN R packages required to pass the lintr checks.
-    default: ""
-  aptget:
-    description: >
-      A list of apt-get packages to install. They should be space separated.
-    default: ""
+      Additional repositories to use. A space or comma separated list of URLs.
+      For example: "https://inbo.r-universe.dev https://cranhaven.r-universe.dev"
+    default: "https://cranhaven.r-universe.dev https://inbo.r-universe.dev"
 
 runs:
-  using: 'docker'
-  image: docker://inbobmk/checklist:latest
-  entrypoint: '/entrypoint_project.sh'
-  args:
-    - ${{ inputs.path }}
-    - ${{ inputs.cran }}
-    - ${{ inputs.aptget }}
+
+  using: "composite"
+  steps:
+
+    - name: "Check out code"
+      uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+
+    - name: "Set up R"
+      uses: r-lib/actions/setup-r@ff9d3a3fd8acec17e91f1d0a1876d95ad60cb519
+      with:
+        r-version: release
+        extra-repositories: ${{ inputs.extra_repositories }}
+
+    - name: "Set up Pandoc"
+      uses: r-lib/actions/setup-pandoc@f50f115c574d8cb2ddc24934af6bed478382b0e7
+
+    - name: "Check R Project"
+      run: |
+        setwd("${{ inputs.path }}")
+        if (file.exists("renv.lock")) {
+          cat("Restoring renv library from lockfile...\n")
+          renv::restore()
+        }
+        version <- tryCatch(
+          packageVersion("checklist"),
+          error = function(e) {
+            if (length(grep("there is no package called", e$message)) == 0) {
+              stop(e)
+            }
+            cat("Installing checklist and its dependencies...\n")
+            install.packages(
+              c("citeme", "covr", "curl", "cyclocomp", "pak", "pkgdown", "renv"),
+              repos = c(getOption("repos", "https://inbo.r-universe.dev"))
+            )
+            pak::pkg_install("inbo/checklist@0.5.4")
+            packageVersion("checklist")
+          }
+        )
+        cat("Using checklist version:", as.character(version), "\n")
+        if (version >= as.package_version("0.5.0")) {
+          if (version >= as.package_version("0.5.2")) {
+            cat("Using checklist to install pak...\n")
+            checklist::install_pak()
+          }
+          if (version >= as.package_version("0.6.0")) {
+            cat("Using citeme to get the default org list...\n")
+            citeme::get_default_org_list()
+          } else {
+            cat("Using checklist to get the default org list...\n")
+            checklist::get_default_org_list()
+          }
+          missing_package <- checklist:::list_missing_packages()
+          cat("Missing packages: ", paste(missing_package, collapse = ", "), "\n")
+          if (length(missing_package) > 0) {
+            cat("Installing missing packages...\n")
+            pak::pkg_install(missing_package)
+          }
+        }
+        cat("Running checklist::check_project()...\n")
+        checklist::check_project(fail = TRUE, quiet = FALSE)
+      shell: Rscript {0}
+      env:
+        RENV_CONFIG_PAK_ENABLED: "TRUE"

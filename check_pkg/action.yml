@@ -5,11 +5,21 @@ inputs:
     description: >
       Which path to check. This path is relative to the root of the repository.
     default: "."
+  extra_repositories:
+    description: >
+      Additional repositories to use. A space or comma separated list of URLs.
+      For example: "https://inbo.r-universe.dev https://cranhaven.r-universe.dev"
+    default: "https://cranhaven.r-universe.dev https://inbo.r-universe.dev"
 
 runs:
 
   using: "composite"
   steps:
+
+    - name: "Check out code"
+      uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+      with:
+        fetch-depth: 0
 
     - name: "get main branch"
       if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master'
@@ -31,9 +41,8 @@ runs:
       uses: r-lib/actions/setup-r@ff9d3a3fd8acec17e91f1d0a1876d95ad60cb519
       with:
         r-version: release
-        extra-repositories:
-          https://cranhaven.r-universe.dev
-          https://inbo.r-universe.dev
+        extra-repositories: ${{ inputs.extra_repositories }}
+
 
     - name: "Set up Pandoc"
       uses: r-lib/actions/setup-pandoc@f50f115c574d8cb2ddc24934af6bed478382b0e7
@@ -42,7 +51,8 @@ runs:
       uses: r-lib/actions/setup-r-dependencies@2e3959d284a9ed60162f28a0f9891d1150f47f72
       with:
         extra-packages:
-          any::checklist
+          any::citeme
+          inbo/checklist@0.5.4
           any::covr
           any::curl
           any::cyclocomp
@@ -51,10 +61,11 @@ runs:
 
     - name: "Check R package"
       run: |
-        setwd("$INPUT_PATH")
+        setwd("${{ inputs.path }}")
         pak::local_install(dependencies = TRUE, upgrade = TRUE, ask = FALSE)
         citeme::get_default_org_list()
         checklist:::restore_roxygen2()
+        checklist::install_pak()
         checklist::check_package()
         covr::codecov(quiet = FALSE, commit="'$GITHUB_SHA'")
         pkgdown::build_site(preview = FALSE, quiet = TRUE)

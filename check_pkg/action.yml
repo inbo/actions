@@ -22,7 +22,6 @@ runs:
         fetch-depth: 0
 
     - name: "get main branch"
-      if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master'
       run: |
         cd $GITHUB_WORKSPACE
         CURRENT_COMMIT="$(git rev-parse HEAD)"
@@ -60,8 +59,16 @@ runs:
           any::renv
 
     - name: "Check R package"
+      env:
+        _R_CHECK_SYSTEM_CLOCK_: false
+        R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+
       run: |
         setwd("${{ inputs.path }}")
+        descr_stats <- gert::git_stat_files("DESCRIPTION", repo = ".")
+        desc_diff <- gert::git_diff(descr_stats$head, repo = ".")
+        cat(desc_diff$patch[desc_diff$old == "DESCRIPTION"])
+        pak::local_install_dev_deps()
         pak::local_install(dependencies = TRUE, upgrade = TRUE, ask = FALSE)
         citeme::get_default_org_list()
         checklist:::restore_roxygen2()

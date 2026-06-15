@@ -19,22 +19,62 @@ runs:
     - name: "Check out code"
       uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
 
+    - name: "Check for renv.lock"
+      id: check-renv
+      run: |
+        if [ -f "${{ inputs.path }}/renv.lock" ]; then
+          echo "has_renv=true" >> $GITHUB_OUTPUT
+        else
+          echo "has_renv=false" >> $GITHUB_OUTPUT
+        fi
+        sudo apt-get update
+        sudo apt-get install -y libcurl4-openssl-dev
+      shell: bash
+
     - name: "Set up R"
       uses: r-lib/actions/setup-r@ff9d3a3fd8acec17e91f1d0a1876d95ad60cb519
       with:
-        r-version: release
+        r-version: ${{ steps.check-renv.outputs.has_renv == 'true' && 'renv' || 'release' }}
         extra-repositories: ${{ inputs.extra_repositories }}
 
     - name: "Set up Pandoc"
       uses: r-lib/actions/setup-pandoc@f50f115c574d8cb2ddc24934af6bed478382b0e7
 
+    - name: Restore renv library
+      if: steps.check-renv.outputs.has_renv == 'true'
+      run: |
+        setwd("${{ inputs.path }}")
+        install.packages(c("jsonlite", "pak", "renv"))
+        cat("Installing system requirements for the R packages in renv.lock...\n")
+        lock_file <- jsonlite::read_json("renv.lock", simplifyVector = FALSE)$Packages
+        cat("Found the following R packages in renv.lock:", paste(names(lock_file), collapse = ", "), "\n")
+        names(lock_file) |>
+          lapply(
+            function(pkg) {
+              sysreq <- tryCatch(
+                pak::pkg_sysreqs(pkg, upgrade = FALSE),
+                error = function(e) {
+                  NULL
+                }
+              )
+              sysreq$packages$system_packages
+            }
+          ) |>
+          unlist(use.names = FALSE) |>
+          unique() |>
+          paste(collapse = " ") |>
+          sprintf(fmt = "sudo apt-get install -y %s") -> cmd
+        cat("Running command: ", cmd, "\n")
+        system(cmd)
+        cat("Restoring the R packages in renv.lock...\n")
+        renv::restore()
+      shell: Rscript {0}
+      env:
+        GITHUB_PAT: ${{ github.token }}
+
     - name: "Check R Project"
       run: |
         setwd("${{ inputs.path }}")
-        if (file.exists("renv.lock")) {
-          cat("Restoring renv library from lockfile...\n")
-          renv::restore()
-        }
         version <- tryCatch(
           packageVersion("checklist"),
           error = function(e) {
@@ -42,11 +82,13 @@ runs:
               stop(e)
             }
             cat("Installing checklist and its dependencies...\n")
-            install.packages(
-              c("citeme", "covr", "curl", "cyclocomp", "pak", "pkgdown", "renv"),
-              repos = c(getOption("repos", "https://inbo.r-universe.dev"))
+            install.packages("pak")
+            pak::pkg_install(
+              c(
+                "covr", "curl", "cyclocomp", "pkgdown", "renv",
+                "inbo/checklist", "inbo/checklist@0.5.4"
+              )
             )
-            pak::pkg_install("inbo/checklist@0.5.4")
             packageVersion("checklist")
           }
         )
@@ -73,5 +115,3 @@ runs:
         cat("Running checklist::check_project()...\n")
         checklist::check_project(fail = TRUE, quiet = FALSE)
       shell: Rscript {0}
-      env:
-        RENV_CONFIG_PAK_ENABLED: "TRUE"

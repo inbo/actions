@@ -1,6 +1,7 @@
-# check_pkg
+# check_deploy
 
-This Github action runs `checklist::check_package()` and fails when it encounters linters in the code.
+This Github action deploys the pkgdown site of an R package to GitHub Pages.
+This requires to run `checklist::check_package()` first.
 
 Add a `.yaml` file like the example below to the `.github/workflows` folder of your project.
 
@@ -25,4 +26,14 @@ jobs:
     steps:
       - name: "Check package with checklist"
         uses: inbo/actions/check_pkg@composite
+  deploy-pages:
+    name: deploy-gh-pages
+    runs-on: ubuntu-24.04
+    needs: check-package
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    permissions:
+      contents: write
+    steps:
+      - name: "Tag and deploy gh-pages"
+        uses: inbo/actions/check_deploy@composite
 ```

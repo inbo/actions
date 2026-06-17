@@ -40,11 +40,30 @@ runs:
     - name: "Set up Pandoc"
       uses: r-lib/actions/setup-pandoc@f50f115c574d8cb2ddc24934af6bed478382b0e7
 
+    - name: "Setup checklist"
+      run: |
+        setwd("${{ inputs.path }}")
+        options(repos = c("https://cloud.r-project.org", "https://cranhaven.r-universe.dev", "https://inbo.r-universe.dev"))
+        cat("Installing checklist and its dependencies...\n")
+        install.packages("pak")
+        pak::pkg_install(
+          c(
+            "covr", "curl", "cyclocomp", "jsonlite", "pkgdown", "renv",
+            "inbo/citeme", "inbo/checklist@0.5.4"
+          )
+        )
+        cat("Using checklist to install dependencies with pak...\n")
+        checklist::install_pak()
+      shell: Rscript --no-init-file {0}
+      env:
+        GITHUB_PAT: ${{ github.token }}
+        R_DOWNLOAD_FILE_METHOD: libcurl
+
+
     - name: Restore renv library
       if: steps.check-renv.outputs.has_renv == 'true'
       run: |
         setwd("${{ inputs.path }}")
-        install.packages(c("jsonlite", "pak", "renv"))
         cat("Installing system requirements for the R packages in renv.lock...\n")
         lock_file <- jsonlite::read_json("renv.lock", simplifyVector = FALSE)$Packages
         cat("Found the following R packages in renv.lock:", paste(names(lock_file), collapse = ", "), "\n")
@@ -71,6 +90,7 @@ runs:
       shell: Rscript {0}
       env:
         GITHUB_PAT: ${{ github.token }}
+        R_DOWNLOAD_FILE_METHOD: libcurl
 
     - name: "Check R Project"
       run: |
@@ -94,10 +114,6 @@ runs:
         )
         cat("Using checklist version:", as.character(version), "\n")
         if (version >= as.package_version("0.5.0")) {
-          if (version >= as.package_version("0.5.2")) {
-            cat("Using checklist to install pak...\n")
-            checklist::install_pak()
-          }
           if (version >= as.package_version("0.6.0")) {
             cat("Using citeme to get the default org list...\n")
             citeme::get_default_org_list()
@@ -115,3 +131,6 @@ runs:
         cat("Running checklist::check_project()...\n")
         checklist::check_project(fail = TRUE, quiet = FALSE)
       shell: Rscript {0}
+      env:
+        GITHUB_PAT: ${{ github.token }}
+        R_DOWNLOAD_FILE_METHOD: libcurl

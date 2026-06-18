@@ -22,6 +22,7 @@ runs:
         fetch-depth: 0
 
     - name: "get main branch"
+      if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master'
       run: |
         cd $GITHUB_WORKSPACE
         CURRENT_COMMIT="$(git rev-parse HEAD)"
@@ -50,7 +51,7 @@ runs:
       uses: r-lib/actions/setup-r-dependencies@2e3959d284a9ed60162f28a0f9891d1150f47f72
       with:
         extra-packages:
-          any::citeme
+          inbo/citeme
           inbo/checklist@0.5.4
           any::covr
           any::curl
@@ -70,10 +71,21 @@ runs:
         cat(desc_diff$patch[desc_diff$old == "DESCRIPTION"])
         pak::local_install_dev_deps()
         pak::local_install(dependencies = TRUE, upgrade = TRUE, ask = FALSE)
+        cat("Getting default org list...\n")
         citeme::get_default_org_list()
+        cat("Restoring the Roxygen2 version as mentioned in the DESCRIPTION...\n")
         checklist:::restore_roxygen2()
         checklist::install_pak()
         checklist::check_package()
-        covr::codecov(quiet = FALSE, commit="'$GITHUB_SHA'")
+        cat("Running covr::codecov() on ${{ github.sha }} ...\n")
+        covr::codecov(quiet = FALSE, commit = "${{ github.sha }}")
+        cat("Building pkgdown site...\n")
         pkgdown::build_site(preview = FALSE, quiet = TRUE)
       shell: Rscript {0}
+
+    - name: "Upload docs artifact"
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+      with:
+        name: docs
+        path: docs/
+        if-no-files-found: ignore

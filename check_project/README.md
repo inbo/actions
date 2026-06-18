@@ -31,6 +31,8 @@ jobs:
         uses: inbo/actions/check_project@composite
         with:
           path: "."
+          extra_repositories: "https://cranhaven.r-universe.dev https://inbo.r-universe.dev"
+          apt: ""
 ```
 
 ## Notes
@@ -41,3 +43,11 @@ jobs:
   - `ubuntu-22.04` → `https://packagemanager.posit.co/cran/__linux__/jammy/latest`
 - **`path`** is optional and defaults to `"."`.
 - **`extra_repositories`** is optional and defaults to `"https://cranhaven.r-universe.dev https://inbo.r-universe.dev"`.
+- **`apt`** is optional and defaults to an empty string.
+  It allows you to specify additional system packages to install, separated by spaces.
+  These packages will be passed to `apt-get install` during the workflow.
+
+Your code might depend on a package which is not available on CRAN or in one of the `extra_repositories`.
+In that case, you have two options.
+- Use [`checklist::checklist$set_pak()`](https://inbo.github.io/checklist/reference/checklist.html#method-checklist-set_pak) to add the dependencies to the `checklist.yml`.
+- Use `renv` to manage your project's dependencies and include a `renv.lock` file in your repository.

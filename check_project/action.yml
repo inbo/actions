@@ -65,7 +65,7 @@ runs:
               stop(e)
             }
             cat("Installing checklist and its dependencies...\n")
-            install.packages("covr", "curl", "cyclocomp", "pak", "pkgdown", "renv")
+            install.packages(c("covr", "curl", "cyclocomp", "pak", "pkgdown", "renv"))
             pak::pkg_install("inbo/citeme")
             pak::pkg_install("inbo/checklist@0.5.4")
             packageVersion("checklist")
@@ -88,7 +88,7 @@ runs:
             cat("Missing packages: ", paste(missing_package, collapse = ", "), "\n")
             if (length(missing_package) > 0) {
               cat("Installing missing packages...\n")
-              pak::pkg_install(missing_package)
+              install.packages(missing_package)
             }
           }
         }

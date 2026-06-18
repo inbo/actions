@@ -5,11 +5,6 @@ inputs:
     description: >
       Which path to check. This path is relative to the root of the repository.
     default: "."
-  extra_repositories:
-    description: >
-      Additional repositories to use. A space or comma separated list of URLs.
-      For example: "https://inbo.r-universe.dev https://cranhaven.r-universe.dev"
-    default: "https://cranhaven.r-universe.dev https://inbo.r-universe.dev"
 
 runs:
 
@@ -23,46 +18,55 @@ runs:
 
     - name: Set tag
       run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
         NEWS_FILE="${{ inputs.path }}/NEWS.md"
         # Extract version from first line: "# package name version"
         VERSION=$(head -n 1 "$NEWS_FILE" | awk '{print $NF}')
         TAG="v${VERSION}"
+        echo "tag=$TAG" >> $GITHUB_ENV
 
         # Extract body: lines from line 2 until next # heading (exclusive)
         BODY=$(tail -n +2 "$NEWS_FILE" | sed '/^# /,$d')
+        echo "$BODY" > body.md
 
         # Create annotated tag if it doesn't exist
         if ! git rev-parse "$TAG" >/dev/null 2>&1; then
           git tag -a "$TAG" -m "$BODY"
           git push origin "$TAG"
         fi
+
       shell: bash
 
-    - name: Deploy docs to gh-pages
+    - name: Prepare gh-pages
       run: |
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@users.noreply.github.com"
-
-        # Stash the built docs from the current workspace
-        DOCS_DIR="$GITHUB_WORKSPACE/${{ inputs.path }}/docs"
-
         if git ls-remote --exit-code --heads origin gh-pages >/dev/null 2>&1; then
           # Branch exists: check it out and amend
           git fetch origin gh-pages
           git checkout gh-pages
-          # Remove existing site content, preserve .git
           git rm -rf --ignore-unmatch .
-          cp -r "$DOCS_DIR/." .
-          git add -A
-          git commit --amend --no-edit --allow-empty
-          git push --force origin gh-pages
         else
           # Branch does not exist: create orphan branch
           git checkout --orphan gh-pages
-          git rm -rf .
-          cp -r "$DOCS_DIR/." .
-          git add -A
-          git commit -m "Deploy pkgdown site to gh-pages"
-          git push origin gh-pages
         fi
       shell: bash
+
+    - name: "Download docs artifact"
+      uses: actions/download-artifact@484a0b528fb4d7bd804637ccb632e47a0e638317
+      with:
+        name: docs
+
+    - name: Deploy docs to gh-pages
+      run: |
+        git add -A
+        git commit --amend --no-edit --allow-empty
+        git push --force origin gh-pages
+      shell: bash
+
+
+
+    - uses: ncipollo/release-action@a9f89a34f017f7311d5481e10ff99d4d1716d8b8
+      with:
+        name: Release ${{ env.tag }}
+        tag: ${{ env.tag }}
+        bodyFile: body.md

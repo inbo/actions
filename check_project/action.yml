@@ -7,9 +7,14 @@ inputs:
     default: "."
   extra_repositories:
     description: >
-      Additional repositories to use. A space or comma separated list of URLs.
+      Additional repositories to use. A space separated list of URLs.
       For example: "https://inbo.r-universe.dev https://cranhaven.r-universe.dev"
     default: "https://cranhaven.r-universe.dev https://inbo.r-universe.dev"
+  apt:
+    description: >
+      Additional system packages to install. A space separated list of package names.
+      For example: "libgdal-dev libgeos-dev"
+    default: ""
 
 runs:
 
@@ -28,7 +33,12 @@ runs:
           echo "has_renv=false" >> $GITHUB_OUTPUT
         fi
         sudo apt-get update
-        sudo apt-get install -y libcurl4-openssl-dev
+        sudo apt-get install -y \
+          libx11-dev git libcurl4-openssl-dev libssl-dev cmake make \
+          libuv1-dev libgit2-dev zlib1g-dev pandoc libfreetype6-dev \
+          libjpeg-dev libpng-dev libtiff-dev libwebp-dev libicu-dev \
+          libfontconfig1-dev libfribidi-dev libharfbuzz-dev libxml2-dev \
+          ${{ inputs.apt }}
       shell: bash
 
     - name: "Set up R"
@@ -40,61 +50,14 @@ runs:
     - name: "Set up Pandoc"
       uses: r-lib/actions/setup-pandoc@f50f115c574d8cb2ddc24934af6bed478382b0e7
 
-    - name: "Setup checklist"
-      run: |
-        setwd("${{ inputs.path }}")
-        options(repos = c("https://cloud.r-project.org", "https://cranhaven.r-universe.dev", "https://inbo.r-universe.dev"))
-        cat("Installing checklist and its dependencies...\n")
-        install.packages("pak")
-        pak::pkg_install(
-          c(
-            "covr", "curl", "cyclocomp", "jsonlite", "pkgdown", "renv",
-            "inbo/citeme", "inbo/checklist@0.5.4"
-          )
-        )
-        cat("Using checklist to install dependencies with pak...\n")
-        checklist::install_pak()
-      shell: Rscript --no-init-file {0}
-      env:
-        GITHUB_PAT: ${{ github.token }}
-        R_DOWNLOAD_FILE_METHOD: libcurl
-
-
-    - name: Restore renv library
-      if: steps.check-renv.outputs.has_renv == 'true'
-      run: |
-        setwd("${{ inputs.path }}")
-        cat("Installing system requirements for the R packages in renv.lock...\n")
-        lock_file <- jsonlite::read_json("renv.lock", simplifyVector = FALSE)$Packages
-        cat("Found the following R packages in renv.lock:", paste(names(lock_file), collapse = ", "), "\n")
-        names(lock_file) |>
-          lapply(
-            function(pkg) {
-              sysreq <- tryCatch(
-                pak::pkg_sysreqs(pkg, upgrade = FALSE),
-                error = function(e) {
-                  NULL
-                }
-              )
-              sysreq$packages$system_packages
-            }
-          ) |>
-          unlist(use.names = FALSE) |>
-          unique() |>
-          paste(collapse = " ") |>
-          sprintf(fmt = "sudo apt-get install -y %s") -> cmd
-        cat("Running command: ", cmd, "\n")
-        system(cmd)
-        cat("Restoring the R packages in renv.lock...\n")
-        renv::restore()
-      shell: Rscript {0}
-      env:
-        GITHUB_PAT: ${{ github.token }}
-        R_DOWNLOAD_FILE_METHOD: libcurl
-
     - name: "Check R Project"
       run: |
         setwd("${{ inputs.path }}")
+        if (file.exists("renv.lock")) {
+          cat("Restoring the R packages in renv.lock...\n")
+          install.packages("renv")
+          renv::restore()
+        }
         version <- tryCatch(
           packageVersion("checklist"),
           error = function(e) {
@@ -102,13 +65,9 @@ runs:
               stop(e)
             }
             cat("Installing checklist and its dependencies...\n")
-            install.packages("pak")
-            pak::pkg_install(
-              c(
-                "covr", "curl", "cyclocomp", "pkgdown", "renv",
-                "inbo/checklist", "inbo/checklist@0.5.4"
-              )
-            )
+            install.packages("covr", "curl", "cyclocomp", "pak", "pkgdown", "renv")
+            pak::pkg_install("inbo/citeme")
+            pak::pkg_install("inbo/checklist@0.5.4")
             packageVersion("checklist")
           }
         )
@@ -121,11 +80,16 @@ runs:
             cat("Using checklist to get the default org list...\n")
             checklist::get_default_org_list()
           }
-          missing_package <- checklist:::list_missing_packages()
-          cat("Missing packages: ", paste(missing_package, collapse = ", "), "\n")
-          if (length(missing_package) > 0) {
-            cat("Installing missing packages...\n")
-            pak::pkg_install(missing_package)
+          if (!file.exists("renv.lock")) {
+            if (version >= as.package_version("0.5.2")) {
+              checklist::install_pak()
+            }
+            missing_package <- checklist:::list_missing_packages()
+            cat("Missing packages: ", paste(missing_package, collapse = ", "), "\n")
+            if (length(missing_package) > 0) {
+              cat("Installing missing packages...\n")
+              pak::pkg_install(missing_package)
+            }
           }
         }
         cat("Running checklist::check_project()...\n")

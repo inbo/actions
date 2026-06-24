@@ -52,7 +52,7 @@ runs:
       with:
         extra-packages:
           inbo/citeme
-          inbo/checklist@0.5.4
+          inbo/checklist
           any::covr
           any::curl
           any::cyclocomp

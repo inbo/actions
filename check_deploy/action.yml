@@ -35,11 +35,17 @@ runs:
           git tag -a "$TAG" -m "$BODY"
           git push origin "$TAG"
         fi
-
       shell: bash
+
+    - uses: ncipollo/release-action@a9f89a34f017f7311d5481e10ff99d4d1716d8b8
+      with:
+        name: Release ${{ env.tag }}
+        tag: ${{ env.tag }}
+        bodyFile: body.md
 
     - name: Prepare gh-pages
       run: |
+        rm body.md
         if git ls-remote --exit-code --heads origin gh-pages >/dev/null 2>&1; then
           # Branch exists: check it out and amend
           git fetch origin gh-pages
@@ -62,11 +68,3 @@ runs:
         git commit --amend --no-edit --allow-empty
         git push --force origin gh-pages
       shell: bash
-
-
-
-    - uses: ncipollo/release-action@a9f89a34f017f7311d5481e10ff99d4d1716d8b8
-      with:
-        name: Release ${{ env.tag }}
-        tag: ${{ env.tag }}
-        bodyFile: body.md

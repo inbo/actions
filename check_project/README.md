@@ -4,7 +4,7 @@ This GitHub action runs `checklist::check_project()` and fails when it encounter
 
 ## Usage
 
-Add a `.yaml` file like the example below to the `.github/workflows` folder of your project.
+Add a `.yaml` file like the minimal example below to the `.github/workflows` folder of your project.
 
 ```yaml
 on:
@@ -28,11 +28,7 @@ jobs:
 
     steps:
       - name: "Check project with checklist"
-        uses: inbo/actions/check_project@composite
-        with:
-          path: "."
-          extra_repositories: "https://cranhaven.r-universe.dev https://inbo.r-universe.dev"
-          apt: ""
+        uses: inbo/actions/check_project@main
 ```
 
 ## Notes

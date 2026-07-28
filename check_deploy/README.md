@@ -24,7 +24,7 @@ jobs:
       contents: read
     steps:
       - name: "Check package with checklist"
-        uses: inbo/actions/check_pkg@composite
+        uses: inbo/actions/check_pkg@main
         with:
           path: "."
           extra_repositories: "https://cranhaven.r-universe.dev https://inbo.r-universe.dev"
@@ -32,12 +32,12 @@ jobs:
     name: deploy-gh-pages
     runs-on: ubuntu-24.04
     needs: check-package
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
     permissions:
       contents: write
     steps:
       - name: "Tag and deploy gh-pages"
-        uses: inbo/actions/check_deploy@composite
+        uses: inbo/actions/check_deploy@main
         with:
           path: "."
 ```

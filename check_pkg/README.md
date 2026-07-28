@@ -23,7 +23,7 @@ jobs:
       contents: read
     steps:
       - name: "Check package with checklist"
-        uses: inbo/actions/check_pkg@composite
+        uses: inbo/actions/check_pkg@main
         with:
           path: "."
           extra_repositories: "https://cranhaven.r-universe.dev https://inbo.r-universe.dev"

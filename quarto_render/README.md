@@ -40,11 +40,11 @@ jobs:
       contents: read
     steps:
       - name: "Prepare quarto"
-        uses: inbo/actions/quarto_prepare@composite
+        uses: inbo/actions/quarto_prepare@main
         with:
           path: ${{ env.QUARTO_SOURCE }}
       - name: "Render quarto"
-        uses: inbo/actions/quarto_render@composite
+        uses: inbo/actions/quarto_render@main
         with:
           path: ${{ env.QUARTO_SOURCE }}
           output: ${{ env.QUARTO_OUTPUT }}
@@ -58,5 +58,5 @@ jobs:
       contents: write
     steps:
       - name: "Deploy gh-pages"
-        uses: inbo/actions/quarto_publish@composite
+        uses: inbo/actions/quarto_publish@main
 ```

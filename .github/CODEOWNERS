@@ -1,0 +1,11 @@
+/check_deploy @ThierryO
+/check_pkg @ThierryO
+/check_project @ThierryO
+/protocol_check @ElsLommelen @hansvancalster
+/protocol_update @ElsLommelen @hansvancalster
+/protocol_website @ElsLommelen @hansvancalster
+/quarto_prepare @ThierryO
+/quarto_publish @ThierryO
+/quarto_render @ThierryO
+/render_inbomd @ThierryO
+/render_indicator @pietervsd @ThierryO

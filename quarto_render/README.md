@@ -97,7 +97,7 @@ jobs:
             sudo apt-get install -y libsodium-dev
             Rscript -e 'pak::pkg_install("jeroen/sodium")'
 
-   publish:
+  publish:
     name: deploy-gh-pages
     runs-on: ubuntu-24.04
     needs: quarto

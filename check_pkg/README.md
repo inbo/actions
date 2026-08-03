@@ -37,11 +37,12 @@ jobs:
   - `ubuntu-22.04` → `https://packagemanager.posit.co/cran/__linux__/jammy/latest`
 - **`path`** is optional and defaults to `"."`.
 - **`extra_repositories`** is optional and defaults to `"https://cranhaven.r-universe.dev https://inbo.r-universe.dev"`.
-
-Your code might depend on a package which is not available on CRAN or in one of the `extra_repositories`.
-In that case, you have two options.
-- Use [`checklist::checklist$set_pak()`](https://inbo.github.io/checklist/reference/checklist.html#method-checklist-set_pak) to add the dependencies to the `checklist.yml`.
-- Use `renv` to manage your project's dependencies and include a `renv.lock` file in your repository.
+- **`cmd`** is optional and defaults to `""`.
+  When non-empty, the commands are run in a bash shell before the package check.
+  The action uses `pak::local_install_dev_deps()` and `pak::local_install(dependencies = TRUE, upgrade = TRUE, ask = FALSE)` to install dependencies.
+  In case installing the dependencies fails, install them via this `cmd` input.
+  E.g. `Rscript -e 'pak::pkg_install("jeroen/sodium")'` to install the `sodium` package from `https://github.com/jeroen`.
+  Or `sudo apt-get install -y libsodium-dev` to install a missing Linux library.
 
 `yaml` with options set.
 
@@ -68,4 +69,7 @@ jobs:
         with:
           path: "."
           extra_repositories: "https://cranhaven.r-universe.dev https://inbo.r-universe.dev"
+          cmd: |
+            sudo apt-get install -y libsodium-dev
+            Rscript -e 'pak::pkg_install("jeroen/sodium")'
 ```

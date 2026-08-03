@@ -26,7 +26,7 @@ jobs:
       - name: "Render quarto"
         uses: inbo/actions/quarto_render@main
 
-   publish:
+  publish:
     name: deploy-gh-pages
     runs-on: ubuntu-24.04
     needs: quarto

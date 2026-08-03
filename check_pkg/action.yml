@@ -10,6 +10,14 @@ inputs:
       Additional repositories to use. A space or comma separated list of URLs.
       For example: "https://inbo.r-universe.dev https://cranhaven.r-universe.dev"
     default: "https://cranhaven.r-universe.dev https://inbo.r-universe.dev"
+  cmd:
+    description: >
+      Which commands to run in a bash terminal before checking the package.
+      This can be used to set up the environment or install additional dependencies which are not available in a CRAN like repository.
+      For example, to install a system library and a package from GitHub:
+        sudo apt-get install -y libsodium-dev
+        Rscript -e 'pak::pkg_install("jeroen/sodium")'
+    default: ""
 
 runs:
 
@@ -43,7 +51,6 @@ runs:
         r-version: release
         extra-repositories: ${{ inputs.extra_repositories }}
 
-
     - name: "Set up Pandoc"
       uses: r-lib/actions/setup-pandoc@f50f115c574d8cb2ddc24934af6bed478382b0e7
 
@@ -58,6 +65,11 @@ runs:
           any::cyclocomp
           any::pkgdown
           any::renv
+
+    - name: "Run custom commands"
+      if: inputs.cmd != ''
+      run: ${{ inputs.cmd }}
+      shell: bash
 
     - name: "Check R package"
       env:
@@ -75,7 +87,6 @@ runs:
         citeme::get_default_org_list()
         cat("Restoring the Roxygen2 version as mentioned in the DESCRIPTION...\n")
         checklist:::restore_roxygen2()
-        checklist::install_pak()
         checklist::check_package()
         cat("Running covr::codecov() on ${{ github.sha }} ...\n")
         covr::codecov(quiet = FALSE, commit = "${{ github.sha }}")

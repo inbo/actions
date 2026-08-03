@@ -7,7 +7,7 @@ Add a `checklist_pkg.yaml` file like the examples below to the `.github/workflow
 
 ## Minimal `checklist_pkg.yaml`
 
-```
+```yaml
 on:
   push:
     branches-ignore:
@@ -58,7 +58,7 @@ jobs:
 
 ## `checklist_pkg.yaml` with options set.
 
-```
+```yaml
 on:
   push:
     branches-ignore:

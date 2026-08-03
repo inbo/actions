@@ -1,0 +1,8 @@
+{
+  "permission": {
+    "edit": {
+      "*.yml": "allow",
+      "*.md": "allow"
+    }
+  }
+}

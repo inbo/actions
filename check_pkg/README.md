@@ -1,10 +1,10 @@
 # check_pkg
 
-This Github action runs `checklist::check_package()` and fails when it encounters linters in the code.
+This Github action runs `checklist::check_package()` and fails when it encounters linters or other problems in the code.
 
-Add a `.yaml` file like the example below to the `.github/workflows` folder of your project.
+Add a `checklist_pkg.yaml` file like the examples below to the `.github/workflows` folder of your project.
 
-Minimal `yaml`
+## Minimal `checklist_pkg.yaml`
 
 ```
 on:
@@ -44,7 +44,7 @@ jobs:
   E.g. `Rscript -e 'pak::pkg_install("jeroen/sodium")'` to install the `sodium` package from `https://github.com/jeroen`.
   Or `sudo apt-get install -y libsodium-dev` to install a missing Linux library.
 
-`yaml` with options set.
+## `checklist_pkg.yaml` with options set.
 
 ```
 on:

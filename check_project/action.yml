@@ -10,10 +10,13 @@ inputs:
       Additional repositories to use. A space separated list of URLs.
       For example: "https://inbo.r-universe.dev https://cranhaven.r-universe.dev"
     default: "https://cranhaven.r-universe.dev https://inbo.r-universe.dev"
-  apt:
+  cmd:
     description: >
-      Additional system packages to install. A space separated list of package names.
-      For example: "libgdal-dev libgeos-dev"
+      Which commands to run in a bash terminal before checking the package.
+      This can be used to set up the environment or install additional dependencies which are not available in a CRAN like repository.
+      For example, to install a system library and a package from GitHub:
+        sudo apt-get install -y libsodium-dev
+        Rscript -e 'pak::pkg_install("jeroen/sodium")'
     default: ""
 
 runs:
@@ -37,8 +40,7 @@ runs:
           libx11-dev git libcurl4-openssl-dev libssl-dev cmake make \
           libuv1-dev libgit2-dev zlib1g-dev pandoc libfreetype6-dev \
           libjpeg-dev libpng-dev libtiff-dev libwebp-dev libicu-dev \
-          libfontconfig1-dev libfribidi-dev libharfbuzz-dev libxml2-dev \
-          ${{ inputs.apt }}
+          libfontconfig1-dev libfribidi-dev libharfbuzz-dev libxml2-dev
       shell: bash
 
     - name: "Set up R"
@@ -49,6 +51,11 @@ runs:
 
     - name: "Set up Pandoc"
       uses: r-lib/actions/setup-pandoc@f50f115c574d8cb2ddc24934af6bed478382b0e7
+
+    - name: "Run custom commands"
+      if: inputs.cmd != ''
+      run: ${{ inputs.cmd }}
+      shell: bash
 
     - name: "Check R Project"
       run: |
@@ -81,9 +88,6 @@ runs:
             checklist::get_default_org_list()
           }
           if (!file.exists("renv.lock")) {
-            if (version >= as.package_version("0.5.2")) {
-              checklist::install_pak()
-            }
             missing_package <- checklist:::list_missing_packages()
             cat("Missing packages: ", paste(missing_package, collapse = ", "), "\n")
             if (length(missing_package) > 0) {

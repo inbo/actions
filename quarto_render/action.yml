@@ -70,19 +70,10 @@ runs:
       run: |
         quarto install tool tinytex --no-prompt --update-path
         tlmgr update --self
-        tlmgr install ${{ inputs.texlive }}
-
-        # Install bundled Calibri fonts (repo source of truth)
-        sudo mkdir -p /usr/local/share/fonts/truetype/calibri
-        sudo cp _extensions/flandersqmd-book/fonts/calibri*.ttf /usr/local/share/fonts/truetype/calibri/
-
-        # Install Inconsolata
-        mkdir -p ${HOME}/.fonts
-        wget -O ${HOME}/.fonts/Inconsolatazi4-Regular.otf http://mirrors.ctan.org/fonts/inconsolata/opentype/Inconsolatazi4-Regular.otf
-        wget -O ${HOME}/.fonts/Inconsolatazi4-Bold.otf http://mirrors.ctan.org/fonts/inconsolata/opentype/Inconsolatazi4-Bold.otf
-
-        # Rebuild cache and verify fonts
-        sudo fc-cache -f -v
+        tlmgr option repository https://mirror.ctan.org/systems/texlive/tlnet
+        if [ -n "${{ inputs.texlive }}" ]; then
+          tlmgr install ${{ inputs.texlive }}
+        fi
       shell: bash {0}
 
     - name: "Run custom commands"

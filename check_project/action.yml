@@ -60,9 +60,9 @@ runs:
     - name: "Check R Project"
       run: |
         setwd("${{ inputs.path }}")
+        install.packages("renv")
         if (file.exists("renv.lock")) {
           cat("Restoring the R packages in renv.lock...\n")
-          install.packages("renv")
           renv::restore()
         }
         version <- tryCatch(
@@ -96,6 +96,7 @@ runs:
             }
           }
         }
+        checklist:::install_dictionary(c("nl_BE", "fr_BE", "de_DE"))
         cat("Running checklist::check_project()...\n")
         checklist::check_project(fail = TRUE, quiet = FALSE)
       shell: Rscript {0}

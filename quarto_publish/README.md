@@ -54,8 +54,15 @@ jobs:
     - default: `"https://cranhaven.r-universe.dev https://inbo.r-universe.dev"`
 - **texlive**
     - Additional TeX Live packages to install.
-      A space separated list of package names.
+      A space or newline separated list of package names.
       For example: `"babel-dutch babel-french babel-german"`
+      Or as a multiline list:
+      ```yaml
+      texlive: |
+        babel-dutch
+        babel-french
+        babel-german
+      ```
     - default: `""`
 - **`cmd`** is optional and defaults to `""`.
   When non-empty, the commands are run in a bash shell before installing R dependencies.
@@ -92,7 +99,10 @@ jobs:
         with:
           path: "source/report"
           output: "output/report"
-          texlive: babel-dutch babel-french babel-german
+          texlive: |
+            babel-dutch
+            babel-french
+            babel-german
           extra_repositories: |
             https://cranhaven.r-universe.dev
             https://inbo.r-universe.dev

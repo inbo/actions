@@ -20,8 +20,12 @@ inputs:
   texlive:
     description: >
       Additional TeX Live packages to install.
-      A space separated list of package names.
+      A space or newline separated list of package names.
       For example: "babel-dutch babel-french babel-german"
+      Or as a multiline list:
+        babel-dutch
+        babel-french
+        babel-german
     default: ""
   cmd:
     description: >
@@ -71,8 +75,9 @@ runs:
         quarto install tool tinytex --no-prompt --update-path
         tlmgr update --self
         tlmgr option repository https://mirror.ctan.org/systems/texlive/tlnet
-        if [ -n "${{ inputs.texlive }}" ]; then
-          tlmgr install ${{ inputs.texlive }}
+        TEXLIVE_PKGS=$(echo "${{ inputs.texlive }}" | tr '\n' ' ' | xargs)
+        if [ -n "${TEXLIVE_PKGS}" ]; then
+          tlmgr install ${TEXLIVE_PKGS}
         fi
       shell: bash {0}
 

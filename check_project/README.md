@@ -4,7 +4,7 @@ This GitHub action runs `checklist::check_project()` and fails when it encounter
 
 ## Usage
 
-Add a `checklist_projec.yaml` file like the minimal example below to the `.github/workflows` folder of your project.
+Add a `checklist_projec.yml` file like the minimal example below to the `.github/workflows` folder of your project.
 
 ```yaml
 on:
@@ -47,7 +47,7 @@ jobs:
   E.g. `Rscript -e 'pak::pkg_install("jeroen/sodium")'` to install the `sodium` package from `https://github.com/jeroen`.
   Or `sudo apt-get install -y libsodium-dev` to install a missing Linux library.
 
-## `checklist_project.yaml` with options set.
+## `checklist_project.yml` with options set.
 
 ```yaml
 on:

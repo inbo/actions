@@ -66,7 +66,7 @@ jobs:
     - default: `""`
 - **`cmd`** is optional and defaults to `""`.
   When non-empty, the commands are run in a bash shell before installing R dependencies.
-  The action try to install all packages used in the quarto document.
+  The action tries to install all packages used in the quarto document.
   This will fail in case you use packages which are not available in any of the CRAN like repositories.
   In case installing the dependencies fails, install them via this `cmd` input.
   E.g. `Rscript -e 'pak::pkg_install("jeroen/sodium")'` to install the `sodium` package from `https://github.com/jeroen`.

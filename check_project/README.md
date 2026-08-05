@@ -41,7 +41,7 @@ jobs:
 - **`extra_repositories`** is optional and defaults to `"https://cranhaven.r-universe.dev https://inbo.r-universe.dev"`.
 - **`cmd`** is optional and defaults to `""`.
   When non-empty, the commands are run in a bash shell before the project check.
-  The action try to install all packages used in the project.
+  The action tries to install all packages used in the project.
   This will fail in case you use packages which are not available in any of the CRAN like repositories.
   In case installing the dependencies fails, install them via this `cmd` input.
   E.g. `Rscript -e 'pak::pkg_install("jeroen/sodium")'` to install the `sodium` package from `https://github.com/jeroen`.

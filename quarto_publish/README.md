@@ -52,6 +52,9 @@ jobs:
     - Additional repositories to use. A space separated list of URLs.
       For example: `"https://inbo.r-universe.dev https://cranhaven.r-universe.dev"`
     - default: `"https://cranhaven.r-universe.dev https://inbo.r-universe.dev"`
+- **extra-packages**
+    - One or more extra package references to install.
+      Separate each reference by newlines or commas for more than one package.
 - **texlive**
     - Additional TeX Live packages to install.
       A space or newline separated list of package names.
@@ -106,6 +109,9 @@ jobs:
           extra_repositories: |
             https://cranhaven.r-universe.dev
             https://inbo.r-universe.dev
+          extra-packages: |
+            inbo/flandersqmd
+            any::renv
           cmd: |
             sudo apt-get install -y libsodium-dev
             Rscript -e 'pak::pkg_install("jeroen/sodium")'

@@ -17,6 +17,9 @@ inputs:
       A space separated list of URLs.
       For example: "https://inbo.r-universe.dev https://cranhaven.r-universe.dev"
     default: "https://cranhaven.r-universe.dev https://inbo.r-universe.dev"
+  extra-packages:
+    description: Any extra packages to install outside of the packages listed in the dependencies.
+    default: ""
   texlive:
     description: >
       Additional TeX Live packages to install.
@@ -64,6 +67,11 @@ runs:
         r-version: ${{ steps.check-renv.outputs.has_renv == 'true' && 'renv' || 'release' }}
         extra-repositories: ${{ inputs.extra_repositories }}
 
+    - name: "Set up R dependencies"
+      uses: r-lib/actions/setup-r-dependencies@2e3959d284a9ed60162f28a0f9891d1150f47f72
+      with:
+        extra-packages: ${{ inputs.extra-packages }}
+
     - name: "Set up Pandoc"
       uses: r-lib/actions/setup-pandoc@f50f115c574d8cb2ddc24934af6bed478382b0e7
 
@@ -85,29 +93,6 @@ runs:
       if: inputs.cmd != ''
       run: ${{ inputs.cmd }}
       shell: bash
-
-    - name: "Install dependencies"
-      run: |
-        setwd("${{ inputs.path }}")
-        if (file.exists("renv.lock")) {
-          cat("Restoring the R packages in renv.lock...\n")
-          install.packages("renv")
-          renv::restore()
-        } else {
-          install.packages(c("covr", "curl", "cyclocomp", "pak", "pkgdown", "renv"))
-          pak::pkg_install("inbo/citeme")
-          pak::pkg_install("inbo/checklist")
-          citeme::get_default_org_list()
-          missing_package <- checklist:::list_missing_packages()
-          if (length(missing_package) > 0) {
-            cat("Installing missing packages...\n")
-            install.packages(missing_package)
-          }
-        }
-      shell: Rscript {0}
-      env:
-        GITHUB_PAT: ${{ github.token }}
-        R_DOWNLOAD_FILE_METHOD: libcurl
 
     - name: Render Quarto Project
       uses: quarto-dev/quarto-actions/render@87b35bb88b36317fa36b5189e9553b4164a5c5a3

@@ -93,6 +93,9 @@ jobs:
           path: "source/report"
           output: "output/report"
           texlive: babel-dutch babel-french babel-german
+          extra_repositories: |
+            https://cranhaven.r-universe.dev
+            https://inbo.r-universe.dev
           cmd: |
             sudo apt-get install -y libsodium-dev
             Rscript -e 'pak::pkg_install("jeroen/sodium")'

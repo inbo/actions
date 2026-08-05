@@ -74,7 +74,9 @@ jobs:
         uses: inbo/actions/check_project@main
         with:
           path: "."
-          extra_repositories: "https://cranhaven.r-universe.dev https://inbo.r-universe.dev"
+          extra_repositories: |
+            https://cranhaven.r-universe.dev
+            https://inbo.r-universe.dev
           cmd: |
             sudo apt-get install -y libsodium-dev
             Rscript -e 'pak::pkg_install("jeroen/sodium")'

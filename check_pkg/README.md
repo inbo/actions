@@ -43,6 +43,11 @@ jobs:
   In case installing the dependencies fails, install them via this `cmd` input.
   E.g. `Rscript -e 'pak::pkg_install("jeroen/sodium")'` to install the `sodium` package from `https://github.com/jeroen`.
   Or `sudo apt-get install -y libsodium-dev` to install a missing Linux library.
+- **`inbo-branch`** allows the user to select a different branch for the `citeme` and `checklist` packages.
+  Defaults to the `main` branch.
+  The other relevant option is `devel`.
+  Note that the same branch is used for both packages.
+  Using a non-existing branch will result in a failure.
 
 ## `checklist_pkg.yml` with options set.
 
@@ -74,4 +79,5 @@ jobs:
           cmd: |
             sudo apt-get install -y libsodium-dev
             Rscript -e 'pak::pkg_install("jeroen/sodium")'
+          inbo-branch: devel
 ```

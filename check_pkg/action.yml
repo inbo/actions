@@ -18,7 +18,10 @@ inputs:
         sudo apt-get install -y libsodium-dev
         Rscript -e 'pak::pkg_install("jeroen/sodium")'
     default: ""
-
+  inbo-branch:
+    description: "Branch of inbo/citeme and inbo/checklist to install (e.g., main or devel)"
+    required: false
+    default: "main"
 runs:
 
   using: "composite"
@@ -58,8 +61,8 @@ runs:
       uses: r-lib/actions/setup-r-dependencies@2e3959d284a9ed60162f28a0f9891d1150f47f72
       with:
         extra-packages:
-          inbo/citeme
-          inbo/checklist
+          inbo/citeme@${{ inputs.inbo-branch }}
+          inbo/checklist@${{ inputs.inbo-branch }}
           any::covr
           any::curl
           any::cyclocomp

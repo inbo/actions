@@ -4,7 +4,7 @@ This GitHub action runs `checklist::check_project()` and fails when it encounter
 
 ## Usage
 
-Add a `checklist_projec.yml` file like the minimal example below to the `.github/workflows` folder of your project.
+Add a `checklist_project.yml` file like the minimal example below to the `.github/workflows` folder of your project.
 
 ```yaml
 on:
